@@ -1,0 +1,140 @@
+        -:    0:Source:Dijkstra.cpp
+        -:    0:Graph:Dijkstra.gcno
+        -:    0:Data:Dijkstra.gcda
+        -:    0:Runs:4
+        -:    1:#include <iostream>
+        -:    2:#include <limits.h>
+        -:    3:#include <string>
+        -:    4:#include <sstream>
+        -:    5:#include <vector>
+        -:    6:using namespace std;
+        -:    7:// Number of vertices in the graph
+        -:    8:#define V 4
+        -:    9:
+        -:   10:// A utility function to find the vertex with minimum
+        -:   11:// distance value, from the set of vertices not yet included
+        -:   12:// in shortest path tree
+        6:   13:int minDistance(int dist[], bool sptSet[])
+        -:   14:{
+        -:   15:
+        -:   16:    // Initialize min value
+        6:   17:    int min = INT_MAX, min_index;
+        -:   18:
+       30:   19:    for (int v = 0; v < V; v++)
+       24:   20:        if (sptSet[v] == false && dist[v] <= min)
+       12:   21:            min = dist[v], min_index = v;
+        -:   22:
+        6:   23:    return min_index;
+        -:   24:}
+        -:   25:
+        -:   26:// A utility function to print the constructed distance
+        -:   27:// array
+        2:   28:void printSolution(int dist[])
+        -:   29:{
+        2:   30:    cout << "Vertex \t Distance from Source" << endl;
+       10:   31:    for (int i = 0; i < V; i++)
+        8:   32:        cout << i << " \t\t\t\t" << dist[i] << endl;
+        2:   33:}
+        -:   34:
+        -:   35:// Function that implements Dijkstra's single source
+        -:   36:// shortest path algorithm for a graph represented using
+        -:   37:// adjacency matrix representation
+        2:   38:void dijkstra(int graph[V][V], int src)
+        -:   39:{
+        -:   40:    int dist[V]; // The output array. dist[i] will hold the
+        -:   41:                 // shortest
+        -:   42:    // distance from src to i
+        -:   43:
+        -:   44:    bool sptSet[V]; // sptSet[i] will be true if vertex i is
+        -:   45:                    // included in shortest
+        -:   46:    // path tree or shortest distance from src to i is
+        -:   47:    // finalized
+        -:   48:
+        -:   49:    // Initialize all distances as INFINITE and stpSet[] as
+        -:   50:    // false
+       10:   51:    for (int i = 0; i < V; i++)
+        8:   52:        dist[i] = INT_MAX, sptSet[i] = false;
+        -:   53:
+        -:   54:    // Distance of source vertex from itself is always 0
+        2:   55:    dist[src] = 0;
+        -:   56:
+        -:   57:    // Find shortest path for all vertices
+        8:   58:    for (int count = 0; count < V - 1; count++)
+        -:   59:    {
+        -:   60:        // Pick the minimum distance vertex from the set of
+        -:   61:        // vertices not yet processed. u is always equal to
+        -:   62:        // src in the first iteration.
+        6:   63:        int u = minDistance(dist, sptSet);
+        -:   64:
+        -:   65:        // Mark the picked vertex as processed
+        6:   66:        sptSet[u] = true;
+        -:   67:
+        -:   68:        // Update dist value of the adjacent vertices of the
+        -:   69:        // picked vertex.
+       30:   70:        for (int v = 0; v < V; v++)
+        -:   71:
+        -:   72:            // Update dist[v] only if is not in sptSet,
+        -:   73:            // there is an edge from u to v, and total
+        -:   74:            // weight of path from src to v through u is
+        -:   75:            // smaller than current value of dist[v]
+       24:   76:            if (!sptSet[v] && graph[u][v] && dist[u] != INT_MAX && dist[u] + graph[u][v] < dist[v])
+        6:   77:                dist[v] = dist[u] + graph[u][v];
+        -:   78:    }
+        2:   79:    printSolution(dist);
+        2:   80:}
+        -:   81:
+       10:   82:int countWords(string str)
+        -:   83:{
+       10:   84:    stringstream s(str);
+       10:   85:    string word;
+       10:   86:    int count = 0;
+       51:   87:    while (s >> word)
+       41:   88:        count++;
+       10:   89:    return count;
+       10:   90:}
+        -:   91:
+        9:   92:vector<int> countWords2(string str, int size)
+        -:   93:{
+        9:   94:    vector<int> line{0, size};
+        9:   95:    stringstream s(str);
+        9:   96:    string word;
+        9:   97:    int i = 0;
+       45:   98:    while (s >> word)
+        -:   99:    {
+       36:  100:        line[i] = stoi(word);
+       36:  101:        i++;
+        -:  102:    }
+       18:  103:    return line;
+        9:  104:}
+        -:  105:
+        4:  106:int main()
+        -:  107:{
+        4:  108:    cout << "The size of the matrix is : " << V << endl;
+        -:  109:    int graph[V][V];
+        -:  110:
+        4:  111:    cout << "Enter " << V * V << " numbers of the graph:" << endl;
+        4:  112:    cout << "Enter only 0 in the diagonal" << endl;
+        -:  113:
+       12:  114:    for (int i = 0; i < V; i++)
+        -:  115:    {
+       10:  116:        string s;
+       10:  117:        getline(cin, s);
+       10:  118:        if (countWords(s) != V)
+        -:  119:        {
+        1:  120:            cout << "Error - not valid number of edges" << endl;
+        1:  121:            exit(1);
+        -:  122:        }
+        9:  123:        vector<int> line = countWords2(s, V);
+       43:  124:        for (int j = 0; j < V; j++)
+        -:  125:        {
+       35:  126:            if (line[j] < 0)
+        -:  127:            {
+        1:  128:                cout << "Error-negative number" << endl;
+        1:  129:                exit(1);
+        -:  130:            }
+       34:  131:            graph[i][j] = line[j];
+        -:  132:        }
+        8:  133:    }
+        2:  134:    dijkstra(graph, 0);
+        2:  135:    return 0;
+        -:  136:}
